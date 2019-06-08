@@ -1,0 +1,13 @@
+<section class="phx-hero">
+  <h1>Search for available tables</h1>
+  <span>
+    From
+    <input type="time" name="fromtime">
+    To
+    <input type="time" name="totime">
+  </span>
+</section>
+
+<section class="row">
+  <div>Available tables from <%= @fromtime %> to <%= @totime %></div>
+</section>
