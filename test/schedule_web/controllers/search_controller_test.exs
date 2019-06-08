@@ -18,7 +18,7 @@ defmodule ScheduleWeb.SearchControllerTest do
         conn
         |> get("/search/#{@date1}20:00:00Z/#{@date2}20:00:00Z")
 
-      assert assert text_response(conn, 200) =~ "Ok"
+      assert assert json_response(conn, 200)
     end
 
     test "fromtime is after totime", %{conn: conn} do
@@ -43,6 +43,14 @@ defmodule ScheduleWeb.SearchControllerTest do
         |> get("/search/#{@date1}20:00:00Z/#{@date_far}20:00:00Z")
 
       assert assert text_response(conn, 400) =~ "most"
+    end
+
+    test "contains timezone", %{conn: conn} do
+      conn =
+        conn
+        |> get("/search/#{@date1}20:00:00+01:00/#{@date_far}20:00:00Z")
+
+      assert assert text_response(conn, 400) =~ "UTC"
     end
   end
 end

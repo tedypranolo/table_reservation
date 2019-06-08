@@ -15,9 +15,4 @@ defmodule Schedule.Restaurant do
     |> validate_required([:name, :address])
   end
 
-  def insert(attrs \\ %{}) do
-   %Schedule.Restaurant{}
-    |> Schedule.Restaurant.changeset(attrs)
-    |> Repo.insert()
-  end
 end

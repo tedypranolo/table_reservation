@@ -1,15 +1,15 @@
-
 defmodule ScheduleWeb.SearchController do
   use ScheduleWeb, :controller
   alias Schedule.Search
+
   def index(conn, _params) do
     render(conn, "index.html")
   end
 
   # 30 minutes
-  @min_interval_seconds Search.min_interval_seconds
+  @min_interval_seconds Search.min_interval_seconds()
   # 31 days
-  @max_interval_seconds Search.max_interval_seconds
+  @max_interval_seconds Search.max_interval_seconds()
   def search(conn, %{"fromtime" => fromtimestring, "totime" => totimestring}) do
     fromres = DateTime.from_iso8601(fromtimestring)
     tores = DateTime.from_iso8601(totimestring)
@@ -42,12 +42,15 @@ defmodule ScheduleWeb.SearchController do
             |> json(Search.get_freetables(fromtime, totime))
         end
 
+      {{:ok, _, fromzone}, {:ok, _, tozone}} when fromzone !== 0 or tozone !== 0 ->
+        conn
+        |> put_status(400)
+        |> text("Error, times contains timezone information, it should be UTC")
+
       _ ->
         conn
         |> put_status(400)
         |> text("Error, fromtime and/or totime parameter is invalid!")
     end
   end
-
-
 end

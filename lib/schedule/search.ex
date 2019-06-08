@@ -19,7 +19,6 @@ defmodule Schedule.Search do
 
   def get_freetable_query(query_start, query_end) do
     diff = NaiveDateTime.diff(query_end, query_start)
-    # [query_start, query_end, diff] |> IO.inspect(label: "Query")
 
     if diff < @min_interval_seconds or diff > @max_interval_seconds do
       @invalid_arguments
@@ -30,6 +29,8 @@ defmodule Schedule.Search do
           distinct: rs.table_id,
           select: rs.table_id
 
+      # typically WHERE NOT EXISTS would be used here, but to avoid using fragment in the ecto query,
+      # to keep everything nicely abstracted, left_join checking for nil + distinct is used to filter out reserved tables
       freetable_query =
         from t in Table,
           join: r in assoc(t, :restaurant),
@@ -38,7 +39,6 @@ defmodule Schedule.Search do
           where: is_nil(rt.table_id),
           select: %{id: t.id, table: t.name, restaurant: r.name}
 
-      # Ecto.Adapters.SQL.to_sql(:all, Repo, freetable_query) |> IO.inspect()
 
       %{free: freetable_query, reserved: reserved_query}
     end
